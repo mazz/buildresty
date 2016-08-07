@@ -1,0 +1,5 @@
+cornice
+requests
+alembic
+zope.sqlalchemy
+psycopg2
