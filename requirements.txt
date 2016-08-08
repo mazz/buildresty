@@ -2,4 +2,4 @@ cornice
 requests
 alembic
 zope.sqlalchemy
-psycopg2
+#psycopg2

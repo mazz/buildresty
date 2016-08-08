@@ -22,7 +22,7 @@ from requests import RequestException
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 import logging
-FORMAT = "%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s"
+FORMAT = '%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s'
 logging.basicConfig(format=FORMAT)
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.DEBUG)
@@ -36,7 +36,7 @@ from sys import platform as _platform
 k_app_name = 'buildresty'
 k_settings_path = os.path.expanduser('~/.{0}'.format(k_app_name))
 k_settings_file = os.path.join(k_settings_path, '{0}.ini'.format(k_app_name))
-project_name_placeholder = "~~~PROJNAME~~~"
+project_name_placeholder = '~~~PROJNAME~~~'
 base_dir = None
 abs_env_dir = None
 app_root_dir = None
@@ -106,11 +106,12 @@ def main():
 
     subparser = parser.add_subparsers()
 
-    build_parser = subparser.add_parser('build', description="Build a RESTy server.")
+    build_parser = subparser.add_parser('build', description='Build a RESTy server.')
     build_parser.add_argument('-n', '--project-name', help='Name of the new pyramid project.', type=str)
     
     build_parser.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
     build_parser.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
+    build_parser.add_argument('-b', '--database-type', help='Database type. `sqlite` or `postgresql` Default is sqlite.', type=str)
     build_parser.set_defaults(func=buildresty)
 
     args = parser.parse_args()
@@ -123,20 +124,23 @@ def buildresty(args):
     
     base_dir = os.getcwd();
     if args.project_name is None:
-        args.project_name = "default"
+        args.project_name = 'default'
     if args.deploy_dir is None:
         args.deploy_dir = base_dir
+    if args.database_type is None:
+        args.database_type = 'sqlite'
+        
     absolute_deploydir = os.path.abspath(args.deploy_dir)
     os.chdir(absolute_deploydir)
 
     virtualenv_cmd = None
     if args.python_path is None:
-        virtualenv_cmd = ["virtualenv", args.project_name + "_env", '--no-site-packages']
+        virtualenv_cmd = ['virtualenv', args.project_name + '_env', '--no-site-packages']
     else:
-        virtualenv_cmd = ["virtualenv", "--python=" + args.python_path, args.project_name + "_env", '--no-site-packages']
+        virtualenv_cmd = ['virtualenv', '--python=' + args.python_path, args.project_name + '_env', '--no-site-packages']
 
     subprocess.call(virtualenv_cmd)
-    abs_env_dir = os.path.abspath(os.path.join(absolute_deploydir, args.project_name + "_env"))
+    abs_env_dir = os.path.abspath(os.path.join(absolute_deploydir, args.project_name + '_env'))
     LOG.debug('abs_env_dir: {0}'.format(str(abs_env_dir)))
     app_root_dir = os.path.join(abs_env_dir, args.project_name)
     os.chdir(abs_env_dir)
@@ -147,12 +151,17 @@ def buildresty(args):
 
 def perform_installs(args):
     global abs_env_dir
+    global base_dir
 
     subprocess.call(['bin/pip', 'install', '-U', 'pip'])
     
-    requirements = os.path.join(args.deploy_dir, "requirements.txt")
+    requirements = os.path.join(base_dir, 'requirements.txt')
+    LOG.debug('requirements: {0}'.format(str(requirements)))
     subprocess.call(['bin/pip', 'install', '-r', requirements])
     
+    if args.database_type is 'postgresql':
+        subprocess.call(['bin/pip', 'install','psycopg2'])
+
 def create_webapp(args):
     global abs_env_dir
     
