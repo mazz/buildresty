@@ -23,9 +23,8 @@ LOG.setLevel(logging.INFO)
 if sys.version[0] == '2':
     import ConfigParser
     reload(sys)
-    sys.setdefaultencoding("utf-8")
+    sys.setdefaultencoding('utf-8')
     k_config_parser = ConfigParser.SafeConfigParser()
-
 else:
     import configparser
     k_config_parser = configparser.SafeConfigParser()
@@ -35,6 +34,9 @@ else:
 
 import shutil
 import subprocess
+
+k_red_prefix = '\033[91m'
+k_colourize_postfix = '\033[0m'
 
 k_app_name = 'buildresty'
 k_settings_path = os.path.expanduser('~/.{0}'.format(k_app_name))
@@ -89,12 +91,21 @@ def buildresty(args):
         ''' alembic autogenerate and upgrade to head to generate the trivial tasks db ''' 
         subprocess.call(['../bin/alembic', '-c', '{args.project_name}.ini'.format(**locals()), 'revision', '--autogenerate', '-m', '\'initializedb\''])
         subprocess.call(['../bin/alembic', '-c', '{args.project_name}.ini'.format(**locals()), 'upgrade', 'head'])
+        print('open a web browser to http://localhost:6543/tasks')
+        print('open a terminal and enter:')
+        print('curl -H "Content-Type: application/json" -X POST -d \'{"description": "empty the trashcan and put the bag in the outside trashcan, dont forget to put a new bag in!", "name": "take_out_the_trash"}\' http://localhost:6543/tasks')
+        print('reload web browser at http://localhost:6543/tasks')
+
+    print('open a web browser to http://localhost:6543/tasks')
+    subprocess.call(['../bin/pserve', '{args.project_name}.ini'.format(**locals())])
 
 def main():
     global base_dir
     global abs_env_dir
     global settings
     global script_dir
+    global k_red_prefix
+    global k_colourize_postfix
 
     parser = argparse.ArgumentParser(
             prog='{0}.py'.format(k_app_name),
@@ -130,6 +141,12 @@ def perform_installs(args):
     subprocess.call(['bin/pip', 'install', '-r', requirements])
 
     if args.migrations == 'postgresql':
+        print('')
+        print('{0} ### NOTE ### {1}'.format(k_red_prefix, k_colourize_postfix))
+        print('{0} ### Ensure that the path to pg_config is in the $PATH! ### {1}'.format(k_red_prefix, k_colourize_postfix))
+        print('{0} ### NOTE ### {1}'.format(k_red_prefix, k_colourize_postfix))
+        print('')
+        
         subprocess.call(['bin/pip', 'install','alembic'])
         subprocess.call(['bin/pip', 'install','psycopg2'])
     elif args.migrations == 'sqlite':
@@ -201,7 +218,7 @@ def setup_migrations(args):
     
     substitute_in_file(appinitpy, from_pyramid, '{inserted_notice_begin}{from_pyramid_sqlalchemy}{inserted_notice_end}'.format(**locals()))
     substitute_in_file(appinitpy, def_main, '{inserted_notice_begin}{def_main_engine}{inserted_notice_end}'.format(**locals()))
-    substitute_in_file(appinitpy, "~~~PROJNAME~~~", args.project_name)
+    substitute_in_file(appinitpy, '~~~PROJNAME~~~', args.project_name)
 
     ''' copy files '''    
     copy_src = os.path.join(script_dir, 'views.py')
@@ -211,8 +228,8 @@ def setup_migrations(args):
     LOG.debug('copy_src: {0}'.format(str(copy_src)))
     LOG.debug('copy_dest: {0}'.format(str(copy_dest)))
     shutil.copy(copy_src, copy_dest)
-    substitute_in_file(copy_dest, "~~~PROJNAME~~~", args.project_name)
-    substitute_in_file(copy_dest, "~~~SCRIPTNAME~~~", k_app_name)
+    substitute_in_file(copy_dest, '~~~PROJNAME~~~', args.project_name)
+    substitute_in_file(copy_dest, '~~~SCRIPTNAME~~~', k_app_name)
 
     models_dir = os.path.join(app_src_dir, 'models')
     os.mkdir(models_dir)
@@ -222,28 +239,28 @@ def setup_migrations(args):
     LOG.debug('copy_src: {0}'.format(str(copy_src)))
     LOG.debug('copy_dest: {0}'.format(str(copy_dest)))
     shutil.copy(copy_src, copy_dest)
-    substitute_in_file(copy_dest, "~~~PROJNAME~~~", args.project_name)
-    substitute_in_file(copy_dest, "~~~SCRIPTNAME~~~", k_app_name)
+    substitute_in_file(copy_dest, '~~~PROJNAME~~~', args.project_name)
+    substitute_in_file(copy_dest, '~~~SCRIPTNAME~~~', k_app_name)
 
     copy_src = os.path.join(script_dir, 'modelstask.py')
     copy_dest = os.path.join(models_dir, 'task.py')
     LOG.debug('copy_src: {0}'.format(str(copy_src)))
     LOG.debug('copy_dest: {0}'.format(str(copy_dest)))
     shutil.copy(copy_src, copy_dest)
-    substitute_in_file(copy_dest, "~~~PROJNAME~~~", args.project_name)
-    substitute_in_file(copy_dest, "~~~SCRIPTNAME~~~", k_app_name)
+    substitute_in_file(copy_dest, '~~~PROJNAME~~~', args.project_name)
+    substitute_in_file(copy_dest, '~~~SCRIPTNAME~~~', k_app_name)
     
 def substitute_in_file(filename, old_string, new_string):
     s=open(filename).read()
     if old_string in s:
-            LOG.info('Changing "{old_string}" to "{new_string}" in "{filename}"'.format(**locals()))
+            LOG.info('Changing \'{old_string}\' to \'{new_string}\' in \'{filename}\''.format(**locals()))
             s=s.replace(old_string, new_string)
             f=open(filename, 'w')
             f.write(s)
             f.flush()
             f.close()
     else:
-            LOG.info('No occurences of "{old_string}" found in "{filename}" '.format(**locals()))
+            LOG.info('No occurences of \'{old_string}\' found in \'{filename}\' '.format(**locals()))
 
 if __name__ == '__main__':
     main()
