@@ -35,9 +35,6 @@ else:
 
 import shutil
 import subprocess
-# import logging
-# from sys import platform as _platform
-
 
 k_app_name = 'buildresty'
 k_settings_path = os.path.expanduser('~/.{0}'.format(k_app_name))
@@ -177,7 +174,6 @@ def setup_migrations(args):
     alembic_chunk = '[alembic]\nscript_location = alembic'
 
     substitute_in_file(appini, 'port = 6543', '{inserted_notice_begin}port = 6543\n\n{alembic_chunk}{inserted_notice_end}'.format(**locals()))
-#port = 6543
 
     ''' update setup.py file '''
     substitute_in_file(setuppy, '      install_requires=[\'cornice\', \'waitress\'],', '{inserted_notice_begin}      install_requires=[\'cornice\', \'pyramid_tm\', \'waitress\'],{inserted_notice_end}'.format(**locals()))
@@ -187,8 +183,6 @@ def setup_migrations(args):
         config.get_section(config.config_ini_section),
         prefix='sqlalchemy.',
         poolclass=pool.NullPool)'''
-        
-#     substitute_in_file(alembic_envpy, '    connectable = engine_from_config(', '#    connectable = engine_from_config(')
 
     connectable = '    connectable = engine_from_config(config.get_section(\'app:main\'), \'sqlalchemy.\', poolclass=pool.NullPool)'
 
@@ -210,8 +204,6 @@ def setup_migrations(args):
     substitute_in_file(appinitpy, "~~~PROJNAME~~~", args.project_name)
 
     ''' copy files '''    
-#     copy_src = '/Users/maz/src/buildresty/views.py'
-#     copy_dest = '/Users/maz/src/buildresty/default_env/default/default/views.py'
     copy_src = os.path.join(script_dir, 'views.py')
     copy_dest = os.path.join(app_src_dir, 'views.py')
     os.unlink(copy_dest)
@@ -240,7 +232,7 @@ def setup_migrations(args):
     shutil.copy(copy_src, copy_dest)
     substitute_in_file(copy_dest, "~~~PROJNAME~~~", args.project_name)
     substitute_in_file(copy_dest, "~~~SCRIPTNAME~~~", k_app_name)
-        
+    
 def substitute_in_file(filename, old_string, new_string):
     s=open(filename).read()
     if old_string in s:
