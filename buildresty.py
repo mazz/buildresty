@@ -80,7 +80,6 @@ def buildresty(args):
 
     perform_installs(args)
     create_webapp(args)
-#     setup_packages(args)
     os.chdir(app_root_dir)
 
     if args.migrations is not None:
@@ -146,16 +145,6 @@ def create_webapp(args):
     os.chdir(abs_env_dir)
     
     subprocess.call(['bin/pcreate', '-t', 'cornice', args.project_name])
-
-def setup_packages(args):
-    global app_root_dir
-    
-    LOG.debug('app_root_dir: {0}'.format(str(app_root_dir)))
-    os.chdir(app_root_dir)
-
-#     subprocess.call(['../bin/python', 'setup.py', 'develop'])
-    subprocess.call(['../bin/alembic', 'init', 'alembic'])
-
 
 def setup_migrations(args):
     global app_root_dir
