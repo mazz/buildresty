@@ -91,12 +91,6 @@ def buildresty(args):
         ''' alembic autogenerate and upgrade to head to generate the trivial tasks db ''' 
         subprocess.call(['../bin/alembic', '-c', '{args.project_name}.ini'.format(**locals()), 'revision', '--autogenerate', '-m', '\'initializedb\''])
         subprocess.call(['../bin/alembic', '-c', '{args.project_name}.ini'.format(**locals()), 'upgrade', 'head'])
-        print('open a web browser to http://localhost:6543/tasks')
-        print('open a terminal and enter:')
-        print('curl -H "Content-Type: application/json" -X POST -d \'{"description": "empty the trashcan and put the bag in the outside trashcan, dont forget to put a new bag in!", "name": "take_out_the_trash"}\' http://localhost:6543/tasks')
-        print('reload web browser at http://localhost:6543/tasks')
-
-    print('open a web browser to http://localhost:6543/tasks')
     subprocess.call(['../bin/pserve', '{args.project_name}.ini'.format(**locals())])
 
 def main():
@@ -119,7 +113,7 @@ def main():
     
     build_parser.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
     build_parser.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
-    build_parser.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. If flag is missing, do not deploy database code at all.', type=str)
+    build_parser.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. For postgresql, ensure that your $PATH includes path to pg_config, or psycopg2 will fail to build. If --migrations flag is missing, will not deploy database code at all.', type=str)
 
     build_parser.set_defaults(func=buildresty)
     args = parser.parse_args()
@@ -140,13 +134,7 @@ def perform_installs(args):
     LOG.debug('requirements: {0}'.format(str(requirements)))
     subprocess.call(['bin/pip', 'install', '-r', requirements])
 
-    if args.migrations == 'postgresql':
-        print('')
-        print('{0} ### NOTE ### {1}'.format(k_red_prefix, k_colourize_postfix))
-        print('{0} ### Ensure that the path to pg_config is in the $PATH! ### {1}'.format(k_red_prefix, k_colourize_postfix))
-        print('{0} ### NOTE ### {1}'.format(k_red_prefix, k_colourize_postfix))
-        print('')
-        
+    if args.migrations == 'postgresql':        
         subprocess.call(['bin/pip', 'install','alembic'])
         subprocess.call(['bin/pip', 'install','psycopg2'])
     elif args.migrations == 'sqlite':
