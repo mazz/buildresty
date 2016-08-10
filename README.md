@@ -23,6 +23,6 @@ reload web browser at http://localhost:6543/tasks # one task called take_out_the
 
 More Information:
 -----------------
-(http://artandlogic.com/2014/03/cornice-and-sqlalchemy/ "Art & Logic")
-(https://cornice.readthedocs.io/en/latest/ "Cornice Docs")
+[Art & Logic](http://artandlogic.com/2014/03/cornice-and-sqlalchemy/ "Art & Logic")
+[Cornice Docs](https://cornice.readthedocs.io/en/latest/ "Cornice Docs")
 
