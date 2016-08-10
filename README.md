@@ -1,5 +1,6 @@
 buildresty
 ==========
+Python script that generates a database-driven RESTy web application. Based on pyramid, cornice and alembic.
 
 Requirements:
 -------------
