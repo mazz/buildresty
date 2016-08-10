@@ -8,13 +8,14 @@ Requirements:
     * Python 2.7 or Python 3.5
     * virtualenv
     * pip
+    * requests
 
 QUICKSTART
 ----------
 ```
 cd buildresty
 
-pip install -r requirements.txt
+sudo pip install requests
 
 python buildresty.py build -d ~ -n restyapp --migrations sqlite # deploy a virtualenv called restyapp_env in your home folder
 
