@@ -107,14 +107,14 @@ def main():
     subparsers.required = True
 
     # create the parser for the "foo" command
-    parser_foo = subparsers.add_parser('build')
-    parser_foo.add_argument('-n', '--project-name', help='Name of the new pyramid project.', type=str)
+    build_parser = subparsers.add_parser('build')
+    build_parser.add_argument('-n', '--project-name', help='Name of the new pyramid project.', type=str)
     
-    parser_foo.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
-    parser_foo.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
-    parser_foo.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. For postgresql, ensure that your $PATH includes path to pg_config, or psycopg2 will fail to build. If --migrations flag is missing, will not deploy database code at all.', type=str)
+    build_parser.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
+    build_parser.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
+    build_parser.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. For postgresql, ensure that your $PATH includes path to pg_config, or psycopg2 will fail to build. If --migrations flag is missing, will not deploy database code at all.', type=str)
 
-    parser_foo.set_defaults(func=build)
+    build_parser.set_defaults(func=build)
 
     args = parser.parse_args()
     args.func(args)
