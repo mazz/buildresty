@@ -10,9 +10,6 @@ import sys
 import collections
 import os
 
-import requests
-from requests.auth import HTTPBasicAuth
-
 import logging
 FORMAT = '%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -28,9 +25,6 @@ if sys.version[0] == '2':
 else:
     import configparser
     k_config_parser = configparser.SafeConfigParser()
-    from requests.packages.urllib3.exceptions import InsecureRequestWarning
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    from requests import RequestException
 
 import shutil
 import subprocess
