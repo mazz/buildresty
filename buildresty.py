@@ -14,7 +14,7 @@ import logging
 FORMAT = '%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s'
 logging.basicConfig(format=FORMAT)
 LOG = logging.getLogger(__name__)
-LOG.setLevel(logging.INFO)
+LOG.setLevel(logging.DEBUG)
 
 ''' python 2 and python 3 compatibility '''
 if sys.version[0] == '2':
@@ -42,7 +42,7 @@ base_dir = None
 abs_env_dir = None
 app_root_dir = None
 
-def buildresty(args):
+def build(args):
     LOG.debug('args: {0}'.format(str(args)))
     global base_dir
     global abs_env_dir
@@ -95,28 +95,29 @@ def main():
     global k_red_prefix
     global k_colourize_postfix
 
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+
+    # create the top-level parser
     parser = argparse.ArgumentParser(
             prog='{0}.py'.format(k_app_name),
             formatter_class=argparse.RawDescriptionHelpFormatter
             )
 
-    subparser = parser.add_subparsers(dest='subparser_name')
-    
-    build_parser = subparser.add_parser('build', description='Build a RESTy server.')
-    build_parser.add_argument('-n', '--project-name', help='Name of the new pyramid project.', type=str)
-    
-    build_parser.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
-    build_parser.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
-    build_parser.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. For postgresql, ensure that your $PATH includes path to pg_config, or psycopg2 will fail to build. If --migrations flag is missing, will not deploy database code at all.', type=str)
+    subparsers = parser.add_subparsers(dest='build')
+    subparsers.required = True
 
-    build_parser.set_defaults(func=buildresty)
+    # create the parser for the "foo" command
+    parser_foo = subparsers.add_parser('build')
+    parser_foo.add_argument('-n', '--project-name', help='Name of the new pyramid project.', type=str)
+    
+    parser_foo.add_argument('-d', '--deploy-dir', help='Deploy base directory of webapp.', type=str)
+    parser_foo.add_argument('-p', '--python-path', help='Path to python to use for virtualenv.', type=str)
+    parser_foo.add_argument('-m', '--migrations', help='Use alembic for database migrations. `sqlite` or `postgresql` Default is sqlite. For postgresql, ensure that your $PATH includes path to pg_config, or psycopg2 will fail to build. If --migrations flag is missing, will not deploy database code at all.', type=str)
+
+    parser_foo.set_defaults(func=build)
+
     args = parser.parse_args()
-    LOG.debug('args: {0}'.format(str(args)))
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    LOG.debug('script_dir: {0}'.format(str(script_dir)))
-
     args.func(args)
-
 
 def perform_installs(args):
     global abs_env_dir
