@@ -14,7 +14,7 @@ import logging
 FORMAT = '%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s'
 logging.basicConfig(format=FORMAT)
 LOG = logging.getLogger(__name__)
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.INFO)
 
 ''' python 2 and python 3 compatibility '''
 if sys.version[0] == '2':
