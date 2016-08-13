@@ -7,6 +7,7 @@ Requirements:
 
     * Python 2.7 or Python 3.5
     * virtualenv
+    * pip
 
 Linux:
 ------
@@ -17,6 +18,8 @@ sudo apt-get install libpq-dev python-dev python3-dev
 QUICKSTART
 ----------
 ```
+cd buildresty
+
 python buildresty.py build -d ~ -n restyapp --migrations sqlite # deploy a virtualenv called restyapp_env in your home folder
 
 open a web browser to http://localhost:6543/tasks # empty task list
