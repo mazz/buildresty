@@ -8,6 +8,12 @@ Requirements:
     * Python 2.7 or Python 3.5
     * virtualenv
 
+Linux:
+------
+```
+sudo apt-get install libpq-dev python-dev python3-dev
+```
+
 QUICKSTART
 ----------
 ```
