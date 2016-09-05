@@ -13,4 +13,7 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 from .task import Task
+from .auth import User
+from .auth import Activation
+
 ### END inserted by ~~~SCRIPTNAME~~~ ###

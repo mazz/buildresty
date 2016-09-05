@@ -1,3 +1,5 @@
 cornice
 requests
 zope.sqlalchemy
+bcrypt
+

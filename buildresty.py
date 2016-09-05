@@ -233,6 +233,15 @@ def setup_migrations(args):
     substitute_in_file(copy_dest, '~~~PROJNAME~~~', args.project_name)
     substitute_in_file(copy_dest, '~~~SCRIPTNAME~~~', k_app_name)
     
+    copy_src = os.path.join(script_dir, 'modelsauth.py')
+    copy_dest = os.path.join(models_dir, 'auth.py')
+    LOG.debug('copy_src: {0}'.format(str(copy_src)))
+    LOG.debug('copy_dest: {0}'.format(str(copy_dest)))
+    shutil.copy(copy_src, copy_dest)
+    substitute_in_file(copy_dest, '~~~PROJNAME~~~', args.project_name)
+    substitute_in_file(copy_dest, '~~~SCRIPTNAME~~~', k_app_name)
+ 
+
 def substitute_in_file(filename, old_string, new_string):
     s=open(filename).read()
     if old_string in s:
