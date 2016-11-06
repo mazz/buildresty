@@ -5,13 +5,15 @@ Python script that generates a database-driven RESTy web application. Based on p
 Requirements:
 -------------
 
-    * Python 2.7 or Python 3.5
+    * Python 3.5
     * virtualenv
 
 QUICKSTART
 ----------
 ```
-python buildresty.py build -d ~ -n restyapp --migrations sqlite # deploy a virtualenv called restyapp_env in your home folder
+cd buildresty
+
+python buildresty.py build -d ~ -n restyapp --migrations sqlite -p /usr/local/bin/python3.5 # deploy a virtualenv called restyapp_env in your home folder
 
 open a web browser to http://localhost:6543/tasks # empty task list
 
