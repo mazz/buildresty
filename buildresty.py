@@ -127,7 +127,7 @@ def perform_installs(args):
     
     requirements = os.path.join(base_dir, 'requirements.txt')
     LOG.debug('requirements: {0}'.format(str(requirements)))
-    subprocess.call(['bin/pip', 'install', '-r', requirements])
+    subprocess.call(['bin/pip', 'install', '--no-cache-dir', '-r', requirements])
 
     if args.migrations == 'postgresql':        
         subprocess.call(['bin/pip', 'install','alembic'])
@@ -140,8 +140,7 @@ def create_webapp(args):
     
     LOG.debug('abs_env_dir: {0}'.format(str(abs_env_dir)))
     os.chdir(abs_env_dir)
-    
-    subprocess.call(['bin/pcreate', '-t', 'cornice', args.project_name])
+    subprocess.call(['bin/cookiecutter', 'gh:Cornices/cookiecutter-cornice'])
 
 def setup_migrations(args):
     global app_root_dir
