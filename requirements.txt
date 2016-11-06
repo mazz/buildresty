@@ -1,3 +1,4 @@
 cornice
 requests
 zope.sqlalchemy
+cookiecutter
